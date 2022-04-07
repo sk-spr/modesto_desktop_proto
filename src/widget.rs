@@ -6,7 +6,7 @@ use crate::pixel_font::{FontPixel, PixelFont};
 
 ///A trait defining functions every widget must have. A widget is the basic building block of
 /// Modesto Desktop. Everything from the top level (MainWidget) to, say, a basic text block (TextWidget)
-/// a widget.
+/// is a widget.
 pub trait Widget{
     ///Renders the widget by compositing rendered children.
     fn render(&self, width: usize, height: usize) -> Vec<[u8; 4]>;
@@ -196,7 +196,7 @@ impl Widget for TopBarWidget {
                 xoff, yoff,
                 buf, width, height,
                 &button_buf, button_widths[idx], button_height);
-            xoff += button_widths[idx] + 10;
+            xoff += button_widths[idx] + 20;
         }
         //add line at the bottom of the top bar
         for i in 0..width{

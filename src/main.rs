@@ -38,11 +38,17 @@ fn main() {
 
     let mut window1 = desktop_minifb::widget::WindowWidget::new("Title", 400, 200, 50, 50);
     window1.register_top_bar(Box::new(desktop_minifb::widget::TopBarWidget::new(
-        Box::new(vec![Box::new(desktop_minifb::widget::TopBarButton::new(
+        Box::new(vec![
+            Box::new(desktop_minifb::widget::TopBarButton::new(
+                Box::new("{}"), Box::new(BTreeMap::new()),
+            )),
+            Box::new(desktop_minifb::widget::TopBarButton::new(
             Box::new("Button"), Box::new(BTreeMap::new()))),
-                      Box::new(desktop_minifb::widget::TopBarButton::new(
-                          Box::new("Bottom"), Box::new(BTreeMap::new()),
-                      ))])
+            Box::new(desktop_minifb::widget::TopBarButton::new(
+              Box::new("Second Button"), Box::new(BTreeMap::new()),
+              )),
+
+        ])
     )));
     main_widget.reg_window(Box::new(window1));
     while window.is_open() && !(window.is_key_down(Key::LeftAlt) && window.is_key_down(Key::F4)){
