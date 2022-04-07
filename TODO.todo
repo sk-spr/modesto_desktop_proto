@@ -1,0 +1,7 @@
+[] load pixel fonts
+[] click handling
+[] proper layouting for some widgets
+[] scroll views
+[] lazy redraw
+[] optimise / replace draw_on_top()
+  [] better sotware algo OR hardware acceleration
