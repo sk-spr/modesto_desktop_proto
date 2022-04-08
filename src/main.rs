@@ -53,13 +53,18 @@ fn main() {
     main_widget.reg_window(Box::new(window1));
     while window.is_open() && !(window.is_key_down(Key::LeftAlt) && window.is_key_down(Key::F4)){
         //MAIN LOOP - FUTURE: IN USERSPACE PROGRAM
+        if x_off == 0{
+            main_widget.windows[0].set_moving(true);
+        }
+        if x_off == 60{
+            main_widget.windows[0].set_moving(false);
+        }
         x_off = (x_off + 1) % 120;
+
         if x_off < 60 {
-            main_widget.windows[0].is_moving = true;
             main_widget.windows[0].x_position = 50 + x_off;
             main_widget.windows[0].y_position = 50 + x_off;
         } else {
-            main_widget.windows[0].is_moving = false;
             main_widget.windows[0].x_position = 110;
             main_widget.windows[0].y_position = 110;
         }
