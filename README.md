@@ -10,5 +10,5 @@ The creator and, as of now, sole maintainer of this project is not a rust expert
 ## How to run
 ```
 cd modesto_desktop_proto
-cargo run
+cargo run --release
 ```
