@@ -9,3 +9,7 @@ edition = "2021"
 minifb = "0.22.0"
 async-std = "1.11.0"
 lazy_static = "1.4.0"
+
+[profile.release]
+opt-level = 3
+
