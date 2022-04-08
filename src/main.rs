@@ -36,15 +36,15 @@ fn main() {
     let mut x_off = 0;
     let mut main_widget = desktop_minifb::widget::MainWidget::new(WIDTH, HEIGHT);
 
-    let mut window1 = desktop_minifb::widget::WindowWidget::new("Title", 400, 200, 50, 50);
-    window1.register_top_bar(Box::new(desktop_minifb::widget::TopBarWidget::new(
+    let mut window1 = desktop_minifb::widget::window::WindowWidget::new("Title", 400, 200, 50, 50);
+    window1.register_top_bar(Box::new(desktop_minifb::widget::top_bar::TopBarWidget::new(
         Box::new(vec![
-            Box::new(desktop_minifb::widget::TopBarButton::new(
+            Box::new(desktop_minifb::widget::top_bar::TopBarButton::new(
                 Box::new("{}"), Box::new(BTreeMap::new()),
             )),
-            Box::new(desktop_minifb::widget::TopBarButton::new(
+            Box::new(desktop_minifb::widget::top_bar::TopBarButton::new(
             Box::new("Button"), Box::new(BTreeMap::new()))),
-            Box::new(desktop_minifb::widget::TopBarButton::new(
+            Box::new(desktop_minifb::widget::top_bar::TopBarButton::new(
               Box::new("Second Button"), Box::new(BTreeMap::new()),
               )),
 
