@@ -45,9 +45,9 @@ impl Widget for WindowTopBarWidget{
         //make the borders black
         for i in 0..width{
             buf[i] = [0u8, 0u8, 0u8, 255u8];
-            for j in 4..(height-4){
-                if j % 2 == 0 && i > 4 && i < width-4{
-                    buf[j * width + i] = [0u8, 0u8, 0u8, 255u8];
+            for j in 0..16{
+                if j % 3 == 0 && i > 4 && i < width-4{
+                    buf[(j+(height/4)) * width + i] = [0u8, 0u8, 0u8, 255u8];
                 }
             }
             buf[(height - 1) * width + i] = [0u8, 0u8, 0u8, 255u8];
@@ -58,7 +58,7 @@ impl Widget for WindowTopBarWidget{
         }
         let button_bounds = self.button.get_min_bounds();
         buf = widget::draw_on_top_at(
-            4, 4,
+            4, 7,
             buf, width, height,
             &match self.button.render(button_bounds.width, button_bounds.height){
                 Some(v) => v,
@@ -72,7 +72,7 @@ impl Widget for WindowTopBarWidget{
         };
         let title_x_offset = width/2 - text_bounds.width / 2;
         let out = widget::draw_on_top_at(
-            title_x_offset, 2,
+            title_x_offset, 7,
             buf, width, height,
             &title, text_bounds.width, text_bounds.height);
         self.cache = Box::new(out.clone());
@@ -122,8 +122,8 @@ impl Widget for WindowTopBarButton{
 
     fn get_min_bounds(&self) -> WidgetBounds {
         WidgetBounds{
-            width: 11,
-            height: 11
+            width: 16,
+            height: 16
         }
     }
 
@@ -175,11 +175,11 @@ impl Widget for WindowWidget{
             0, 0,
             vec![[0u8, 0u8, 0u8, 255u8];width * height],
             width, height,
-            &match self.window_top_bar.render(width, 20){
+            &match self.window_top_bar.render(width, 30){
                 Some(v) => v,
                 None => self.window_top_bar.get_cache()
             },
-            width, 20);
+            width, 30);
         self.cache_height = height;
         self.cache_width = width;
         self.cache = Box::new(buf.clone());

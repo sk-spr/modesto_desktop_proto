@@ -1,13 +1,13 @@
 use std::collections::BTreeMap;
 use std::sync::Mutex;
 use std::time::Duration;
-use minifb::{Key, Window, WindowOptions};
+use minifb::{Key, MouseMode, Window, WindowOptions};
 use lazy_static::lazy_static;
 use desktop_minifb::widget::Widget;
 
 
-const WIDTH : usize = 513;
-const HEIGHT: usize = 343;
+const WIDTH : usize = 720;
+const HEIGHT: usize = 480;
 
 lazy_static!{
     static ref FRAMEBUFFER : Mutex<Vec<[u8; 3]>> = Mutex::new(vec![[0u8;3]; WIDTH * HEIGHT]);
@@ -36,7 +36,7 @@ fn main() {
     let mut x_off = 0;
     let mut main_widget = desktop_minifb::widget::MainWidget::new(WIDTH, HEIGHT);
 
-    let mut window1 = desktop_minifb::widget::window::WindowWidget::new("Title", 400, 200, 50, 50);
+    let mut window1 = desktop_minifb::widget::window::WindowWidget::new(" Title ", 500, 300, 50, 50);
     window1.register_top_bar(Box::new(desktop_minifb::widget::top_bar::TopBarWidget::new(
         Box::new(vec![
             Box::new(desktop_minifb::widget::top_bar::TopBarButton::new(
@@ -60,7 +60,10 @@ fn main() {
             main_widget.windows[0].set_moving(false);
         }
         x_off = (x_off + 1) % 120;
-
+        println!("{}", match window.get_mouse_pos(MouseMode::Clamp){
+            Some(p) => format!("{}:{}", p.0, p.1),
+            None => String::from("NONE")
+        });
         if x_off < 60 {
             main_widget.windows[0].x_position = 50 + x_off;
             main_widget.windows[0].y_position = 50 + x_off;

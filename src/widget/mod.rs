@@ -108,11 +108,11 @@ impl MainWidget{
     pub fn render(&mut self, width: usize, height: usize) -> Vec<[u8; 4]> {
         if self.windows.len() > 0 {
             let mut buf = vec![[128u8; 4]; width * height];
-            let top_bar = self.windows[0].render_top_bar(width, 20);
+            let top_bar = self.windows[0].render_top_bar(width, 30);
             buf = draw_on_top_at(
                 0, 0,
                 buf, width, height,
-                &top_bar, width, 20);
+                &top_bar, width, 30);
             for window in self.windows.iter_mut().rev(){
                 let bounds = window.get_min_bounds();
                 buf= draw_on_top_at(

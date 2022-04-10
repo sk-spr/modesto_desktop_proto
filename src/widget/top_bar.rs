@@ -122,7 +122,7 @@ impl Widget for TopBarWidget {
             button_height = bounds.height;
         }
         let mut xoff = 10;
-        let yoff = 2;
+        let yoff = 7;
         for (idx, button_buf) in button_bufs.iter().enumerate(){
             buf = widget::draw_on_top_at(
                 xoff, yoff,
