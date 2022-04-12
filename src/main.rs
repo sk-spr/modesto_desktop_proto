@@ -3,7 +3,7 @@ use std::sync::Mutex;
 use std::time::Duration;
 use minifb::{Key, MouseButton, MouseMode, Window, WindowOptions};
 use lazy_static::lazy_static;
-use desktop_minifb::widget::{Widget, mouse::MousePosition};
+use desktop_minifb::widget::mouse::MousePosition;
 use desktop_minifb::widget::mouse::{MouseCallbackRegistrar, MouseEvent, MouseQueueResult};
 
 
@@ -39,17 +39,17 @@ fn main() {
 
     let mut window1 = desktop_minifb::widget::window::WindowWidget::new(" Title ", 500, 300, 50, 50);
     window1.register_top_bar(Box::new(desktop_minifb::widget::top_bar::TopBarWidget::new(
-        Box::new(vec![
+        vec![
             Box::new(desktop_minifb::widget::top_bar::TopBarButton::new(
                 Box::new("{}"), Box::new(BTreeMap::new()),
             )),
             Box::new(desktop_minifb::widget::top_bar::TopBarButton::new(
             Box::new("Button"), Box::new(BTreeMap::new()))),
             Box::new(desktop_minifb::widget::top_bar::TopBarButton::new(
-              Box::new("Second Button"), Box::new(BTreeMap::new()),
-              )),
+                Box::new("Second Button"), Box::new(BTreeMap::new()),
+            )),
 
-        ])
+        ]
     )));
     main_widget.reg_window(Box::new(window1));
     let mut lmb_down = false;
@@ -61,10 +61,7 @@ fn main() {
         callbacks: vec![],
     };
     while window.is_open() && !(window.is_key_down(Key::LeftAlt) && window.is_key_down(Key::F4)){
-        let mouse_p = match window.get_mouse_pos(MouseMode::Clamp){
-            Some(tuple) => tuple,
-            None => (0f32,0f32)
-        };
+        let mouse_p = window.get_mouse_pos(MouseMode::Clamp).unwrap_or((0f32,0f32));
         mouse_pos.x_position = mouse_p.0;
         mouse_pos.y_position = mouse_p.1;
         let mut mouse_event = MouseEvent::LMBUp;
@@ -101,7 +98,7 @@ fn main() {
 }
 ///Combines the u8 components (order RGB) and 255 into a 32 bit unsigned integer (order: ARGB)
 fn compute_col_u32_no_alpha(components: &[u8; 3])-> u32{
-    ((255 as u32) << 24) | ((components[0] as u32) << 16) | ((components[1] as u32) << 8) | (components[2] as u32)
+    (255_u32 << 24) | ((components[0] as u32) << 16) | ((components[1] as u32) << 8) | (components[2] as u32)
 }
 ///Combines the components (order: RGBA) into a u32 (order: ARGB)
 fn compute_col_u32_alpha(components: &[u8; 4]) -> u32 {

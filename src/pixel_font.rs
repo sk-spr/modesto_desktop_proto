@@ -11,7 +11,7 @@ pub struct PixelFontChar{
     pub(crate) width: usize,
     pub(crate) height: usize,
     pub right_offset: usize,
-    pub(crate) pixels: Box<Vec<FontPixel>>,
+    pub(crate) pixels: Vec<FontPixel>,
 }
 
 #[derive(Clone, Eq, PartialEq)]
@@ -33,7 +33,7 @@ impl PixelFont {
                         width: 8,
                         height: 16,
                         right_offset: 1,
-                        pixels: Box::new(vec![
+                        pixels: vec![
                             B, B, B, B, B, B, W, W,
                             B, B, B, B, B, B, B, W,
                             B, B, W, W, W, B, B, B,
@@ -50,13 +50,13 @@ impl PixelFont {
                             B, B, W, W, W, B, B, B,
                             B, B, B, B, B, B, B, W,
                             B, B, B, B, B, B, W, W
-                        ])
+                        ]
                     }),
                     ('u', PixelFontChar{
                         width: 8,
                         height: 16,
                         right_offset: 1,
-                        pixels: Box::new(vec![
+                        pixels: vec![
                             W, W, W, W, W, W, W, W,
                             W, W, W, W, W, W, W, W,
                             W, W, W, W, W, W, W, W,
@@ -73,13 +73,13 @@ impl PixelFont {
                             B, B, B, W, W, B, B, B,
                             W, B, B, B, B, B, B, B,
                             W, W, B, B, B, B, B, B,
-                        ])
+                        ]
                     }),
                     ('t', PixelFontChar{
                         width: 6,
                         height: 16,
                         right_offset: 1,
-                        pixels: Box::new(vec![
+                        pixels: vec![
                             W, W, B, B, W, W,
                             W, W, B, B, W, W,
                             W, W, B, B, W, W,
@@ -99,13 +99,13 @@ impl PixelFont {
                             W, W, B, B, W, W,
                             W, W, B, B, W, W,
                             W, W, B, B, W, W,
-                        ])
+                        ]
                     }),
                     ('o', PixelFontChar{
                         width: 6,
                         height: 16,
                         right_offset: 1,
-                        pixels: Box::new(vec![
+                        pixels: vec![
                             W, W, W, W, W, W,
                             W, W, W, W, W, W,
                             W, W, W, W, W, W,
@@ -123,13 +123,13 @@ impl PixelFont {
                             W, B, B, B, B, W,
                             W, W, B, B, W, W,
 
-                        ])
+                        ]
                     }),
                     ('n', PixelFontChar{
                         width: 7,
                         height: 16,
                         right_offset: 1,
-                        pixels: Box::new(vec![
+                        pixels: vec![
                             W, W, W, W, W, W, W,
                             W, W, W, W, W, W, W,
                             W, W, W, W, W, W, W,
@@ -146,13 +146,13 @@ impl PixelFont {
                             B, B, W, W, W, B, B,
                             B, B, W, W, W, B, B,
                             B, B, W, W, W, B, B,
-                        ])
+                        ]
                     }),
                     (' ', PixelFontChar{
                         width: 8,
                         height: 16,
                         right_offset: 1,
-                        pixels: Box::new(vec![
+                        pixels: vec![
                             W, W, W, W, W, W, W, W,
                             W, W, W, W, W, W, W, W,
                             W, W, W, W, W, W, W, W,
@@ -169,13 +169,13 @@ impl PixelFont {
                             W, W, W, W, W, W, W, W,
                             W, W, W, W, W, W, W, W,
                             W, W, W, W, W, W, W, W,
-                        ])
+                        ]
                     }),
                     ('T', PixelFontChar{
                         width: 8,
                         height: 16,
                         right_offset: 1,
-                        pixels: Box::new(vec![
+                        pixels: vec![
                             W, B, B, B, B, B, B, B,
                             B, B, B, B, B, B, B, W,
                             W, W, W, B, B, W, W, W,
@@ -192,13 +192,13 @@ impl PixelFont {
                             W, W, W, B, B, W, W, W,
                             W, W, W, B, B, W, W, W,
                             W, W, W, B, B, W, W, W,
-                        ])
+                        ]
                     }),
                     ('i', PixelFontChar{
                         width:2,
                         height: 16,
                         right_offset: 1,
-                        pixels: Box::new(vec![
+                        pixels: vec![
                             W, W,
                             W, W,
                             W, W,
@@ -216,13 +216,13 @@ impl PixelFont {
                             B, B,
                             B, B,
 
-                        ])
+                        ]
                     }),
                     ('l', PixelFontChar{
                         width: 2,
                         height: 16,
                         right_offset: 1,
-                        pixels: Box::new(vec![
+                        pixels: vec![
                             W, W,
                             B, B,
                             B, B,
@@ -239,13 +239,13 @@ impl PixelFont {
                             B, B,
                             B, B,
                             B, B,
-                        ])
+                        ]
                     }),
                     ('e', PixelFontChar{
                         width: 6,
                         height: 16,
                         right_offset: 1,
-                        pixels: Box::new(vec![
+                        pixels: vec![
                             W, W, W, W, W, W,
                             W, W, W, W, W, W,
                             W, W, W, W, W, W,
@@ -262,13 +262,13 @@ impl PixelFont {
                             B, B, W, W, B, B,
                             B, B, B, B, B, B,
                             W, B, B, B, B, W,
-                        ])
+                        ]
                     }),
                     ('S', PixelFontChar{
                         width: 8,
                         height: 16,
                         right_offset: 1,
-                        pixels: Box::new(vec![
+                        pixels: vec![
                             W, W, B, B, B, B, W, W,
                             W, B, B, B, B, B, B, W,
                             B, B, B, W, W, B, B, B,
@@ -285,13 +285,13 @@ impl PixelFont {
                             B, B, B, W, W, B, B, B,
                             W, B, B, B, B, B, B, W,
                             W, W, B, B, B, B, W, W,
-                        ])
+                        ]
                     }),
                     ('c', PixelFontChar{
                         width:6,
                         height: 16,
                         right_offset: 1,
-                        pixels: Box::new(vec![
+                        pixels: vec![
                             W, W, W, W, W, W,
                             W, W, W, W, W, W,
                             W, W, W, W, W, W,
@@ -308,13 +308,13 @@ impl PixelFont {
                             B, B, W, W, B, B,
                             W, B, B, B, B, W,
                             W, W, B, B, W, W,
-                        ])
+                        ]
                     }),
                     ('d', PixelFontChar{
                         width: 7,
                         height: 16,
                         right_offset: 0,
-                        pixels: Box::new(vec![
+                        pixels: vec![
                             W, W, W, W, W, B, B,
                             W, W, W, W, W, B, B,
                             W, W, W, W, W, B, B,
@@ -331,13 +331,13 @@ impl PixelFont {
                             B, B, W, W, B, B, B,
                             W, B, B, B, B, B, B,
                             W, W, B, B, W, B, B,
-                        ])
+                        ]
                     }),
                     ('{', PixelFontChar{
                         width: 4,
                         height: 16,
                         right_offset: 1,
-                        pixels: Box::new(vec![
+                        pixels: vec![
                             W, W, B, B,
                             W, B, B, W,
                             W, B, B, W,
@@ -354,13 +354,13 @@ impl PixelFont {
                             W, B, B, W,
                             W, B, B, W,
                             W, W, B, B,
-                        ])
+                        ]
                     }),
                     ('}', PixelFontChar{
                         width: 4,
                         height: 16,
                         right_offset: 1,
-                        pixels: Box::new(vec![
+                        pixels: vec![
                             B, B, W, W,
                             W, B, B, W,
                             W, B, B, W,
@@ -377,7 +377,7 @@ impl PixelFont {
                             W, B, B, W,
                             W, B, B, W,
                             B, B, W, W,
-                        ])
+                        ]
                     })
                 ]
             ))

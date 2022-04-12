@@ -1,9 +1,6 @@
-use std::collections::BTreeMap;
-use top_bar::TopBarWidget;
 use window::WindowWidget;
-use crate::pixel_font::{FontPixel, PixelFont};
-use crate::widget::text_widget::TextWidget;
 use mouse::{MousePosition, MouseEvent};
+use crate::pixel_font::FontPixel;
 use crate::widget::mouse::MouseCallbackRegistrar;
 
 pub mod text_widget;
@@ -21,14 +18,14 @@ pub trait Widget{
     ///Renders the widget by compositing rendered children.
     fn render(&mut self, width: usize, height: usize) -> Option<Vec<[u8; 4]>>;
     ///Gets a Vec of the children of the widget.
-    fn get_children(&self) -> Option<&Box<Vec<Box<dyn Widget>>>>;
+    fn get_children(&self) -> Option<&Vec<Box<dyn Widget>>>;
     ///Gets minimum recommended bounds for widget.
     fn get_min_bounds(&self) -> WidgetBounds;
     ///Gets the cache for the widget (previously drawn)
     fn get_cache(&mut self) -> Vec<[u8; 4]>;
     ///Handles a mouse event at the relative location in the widget. To be called recursively from parent
     /// widget until handled.
-    fn handle_mouse_event(&mut self, mouse_position: MousePosition, relative_mouse_position: MousePosition, mouse_event: MouseEvent, registrar: &mut MouseCallbackRegistrar) -> ();
+    fn handle_mouse_event(&mut self, mouse_position: MousePosition, relative_mouse_position: MousePosition, mouse_event: MouseEvent, registrar: &mut MouseCallbackRegistrar) {}
 }
 
 ///A structure for returning 2d rect boundaries of widgets.
@@ -80,7 +77,7 @@ impl Widget for RectWidget{
     fn render(&mut self, width: usize, height: usize) -> Option<Vec<[u8; 4]>> {
         Some(vec![[128u8;4];width * height])
     }
-    fn get_children(&self) -> Option<&Box<Vec<Box<dyn Widget>>>> {
+    fn get_children(&self) -> Option<&Vec<Box<dyn Widget>>> {
         todo!()
     }
     fn get_min_bounds(&self) -> WidgetBounds {
@@ -166,7 +163,7 @@ pub fn draw_on_top_at(
     mut base: Vec<[u8; 4]>,
     base_width: usize,
     base_height: usize,
-    top: &Vec<[u8; 4]>,
+    top: &[[u8; 4]],
     top_width: usize,
     top_height: usize
 ) -> Vec<[u8; 4]>{
@@ -187,7 +184,7 @@ pub fn draw_on_top_at(
 pub fn from_font_to_pixbuf(
     foreground: Color,
     background: Color,
-    buffer: &Vec<FontPixel>
+    buffer: &[FontPixel]
 ) -> Vec<[u8;4]>{
     buffer.iter().map(|p| {
         [

@@ -2,8 +2,8 @@ use std::cell::Cell;
 use std::sync::Arc;
 use crate::pixel_font::PixelFont;
 use crate::widget;
-use crate::widget::{Color, RectWidget, TOP_BAR_HEIGHT, Widget, WidgetBounds};
-use crate::widget::mouse::{MouseCallbackRegistrar, MouseEvent, MousePosition, MouseQueueResult};
+use crate::widget::{Color, RectWidget, Widget, WidgetBounds};
+use crate::widget::mouse::{MouseCallbackRegistrar, MouseEvent, MousePosition};
 use crate::widget::text_widget::TextWidget;
 use crate::widget::top_bar::TopBarWidget;
 
@@ -13,7 +13,7 @@ const WINDOW_TOP_BAR_HEIGHT: usize = 30;
 pub struct WindowTopBarWidget{
     button: Box<WindowTopBarButton>,
     title: Box<TextWidget>,
-    cache: Box<Vec<[u8; 4]>>,
+    cache: Vec<[u8; 4]>,
     cache_width: usize,
     cache_height: usize,
     needs_redraw: bool,
@@ -32,7 +32,7 @@ impl WindowTopBarWidget{
             button: Box::new(WindowTopBarButton{
                 pressed: Arc::new(Cell::new(false))
             }),
-            cache: Box::new(vec![]),
+            cache: vec![],
             cache_height: 0,
             cache_width: 0,
             needs_redraw: true,
@@ -61,7 +61,7 @@ impl Widget for WindowTopBarWidget{
             buf[(height - 1) * width + i] = [0u8, 0u8, 0u8, 255u8];
         }
         for i in 0..height{
-            buf[i * width + 0] = [0u8, 0u8, 0u8, 255u8];
+            buf[i * width] = [0u8, 0u8, 0u8, 255u8];
             buf[i * width + (width - 1)] = [0u8, 0u8, 0u8, 255u8];
         }
         let button_bounds = self.button.get_min_bounds();
@@ -83,13 +83,13 @@ impl Widget for WindowTopBarWidget{
             title_x_offset, 7,
             buf, width, height,
             &title, text_bounds.width, text_bounds.height);
-        self.cache = Box::new(out.clone());
+        self.cache = out.clone();
         self.cache_height = height;
         self.cache_width = width;
         self.needs_redraw = false;
         Some(out)
     }
-    fn get_children(&self) -> Option<&Box<Vec<Box<dyn Widget>>>> {
+    fn get_children(&self) -> Option<&Vec<Box<dyn Widget>>> {
         todo!()
     }
     fn get_min_bounds(&self) -> WidgetBounds {
@@ -97,16 +97,16 @@ impl Widget for WindowTopBarWidget{
     }
 
     fn get_cache(&mut self) -> Vec<[u8; 4]> {
-        *self.cache.clone()
+        self.cache.clone()
     }
 
-    fn handle_mouse_event(&mut self, mouse_position: MousePosition, relative_mouse_position: MousePosition, mouse_event: MouseEvent, registrar: &mut MouseCallbackRegistrar) -> () {
+    fn handle_mouse_event(&mut self, mouse_position: MousePosition, relative_mouse_position: MousePosition, mouse_event: MouseEvent, registrar: &mut MouseCallbackRegistrar) {
         println!("Handling window top bar mouse event, abs x={};y={} rel x={};y={}", mouse_position.x_position, mouse_position.y_position, relative_mouse_position.x_position, relative_mouse_position.y_position);
-        if relative_mouse_position.x_position > 4 as f32 && relative_mouse_position.x_position < (4 + 16) as f32 &&
-            relative_mouse_position.y_position > 7 as f32 && relative_mouse_position.y_position < (7+16) as f32{
+        if relative_mouse_position.x_position > 4.0 && relative_mouse_position.x_position < (4 + 16) as f32 &&
+            relative_mouse_position.y_position > 7.0 && relative_mouse_position.y_position < (7+16) as f32{
             let rel_mouse_position = MousePosition{
-                x_position: relative_mouse_position.x_position - 4 as f32,
-                y_position: relative_mouse_position.y_position - 7 as f32,
+                x_position: relative_mouse_position.x_position - 4.0,
+                y_position: relative_mouse_position.y_position - 7.0,
             };
             self.needs_redraw = true;
             self.button.handle_mouse_event(mouse_position, rel_mouse_position, mouse_event, registrar);
@@ -140,7 +140,7 @@ impl Widget for WindowTopBarButton{
 
     }
 
-    fn get_children(&self) -> Option<&Box<Vec<Box<dyn Widget>>>> {
+    fn get_children(&self) -> Option<&Vec<Box<dyn Widget>>> {
         None
     }
 
@@ -155,7 +155,7 @@ impl Widget for WindowTopBarButton{
         todo!()
     }
 
-    fn handle_mouse_event(&mut self, mouse_position: MousePosition, relative_mouse_position: MousePosition, mouse_event: MouseEvent, registrar: &mut MouseCallbackRegistrar) -> () {
+    fn handle_mouse_event(&mut self, mouse_position: MousePosition, relative_mouse_position: MousePosition, mouse_event: MouseEvent, registrar: &mut MouseCallbackRegistrar) {
         println!("Mouse event on WindowTopBarButton at abs{};{} rel {};{}", mouse_position.x_position, mouse_position.y_position, relative_mouse_position.x_position, relative_mouse_position.y_position);
         if mouse_event == MouseEvent::LMBDown {
             self.pressed.set(true);
@@ -184,7 +184,7 @@ pub struct WindowWidget{
     pub y_position: usize,
     pub(crate) width: usize,
     pub(crate) height: usize,
-    cache: Box<Vec<[u8;4]>>,
+    cache: Vec<[u8;4]>,
     cache_width: usize,
     cache_height: usize,
     needs_redraw : bool,
@@ -194,11 +194,11 @@ impl Widget for WindowWidget{
     fn render(&mut self, width: usize, height: usize) -> Option<Vec<[u8; 4]>> {
         let topbar = self.window_top_bar.render(width, WINDOW_TOP_BAR_HEIGHT);
         let body = self.window_body.render(width, height - WINDOW_TOP_BAR_HEIGHT);
-        if !self.needs_redraw && self.cache.len() > 0
+        if !self.needs_redraw && !self.cache.is_empty()
             && self.cache_width == width && self.cache_height == height
             && topbar != None && body != None{
 
-            return Some(*self.cache.clone())
+            return Some(self.cache.clone())
         }
         //TODO: render widgets after layouting
         if self.is_moving {
@@ -211,7 +211,7 @@ impl Widget for WindowWidget{
                 buf[i * width] = [0u8,0u8,0u8,0u8];
                 buf[i* width + width - 1] = [0u8, 0u8, 0u8, 0u8];
             }
-            self.cache = Box::new(buf.clone());
+            self.cache = buf.clone();
             self.cache_width = width;
             self.cache_height = height;
             self.needs_redraw = false;
@@ -229,11 +229,11 @@ impl Widget for WindowWidget{
             width, WINDOW_TOP_BAR_HEIGHT);
         self.cache_height = height;
         self.cache_width = width;
-        self.cache = Box::new(buf.clone());
+        self.cache = buf.clone();
         self.needs_redraw = false;
         Some(buf)
     }
-    fn get_children(&self) -> Option<&Box<Vec<Box<dyn Widget>>>> {
+    fn get_children(&self) -> Option<&Vec<Box<dyn Widget>>> {
         todo!()
     }
     fn get_min_bounds(&self) -> WidgetBounds {
@@ -246,7 +246,7 @@ impl Widget for WindowWidget{
         todo!()
     }
 
-    fn handle_mouse_event(&mut self, mouse_position: MousePosition, relative_mouse_position: MousePosition, mouse_event: MouseEvent, registrar: &mut MouseCallbackRegistrar) -> () {
+    fn handle_mouse_event(&mut self, mouse_position: MousePosition, relative_mouse_position: MousePosition, mouse_event: MouseEvent, registrar: &mut MouseCallbackRegistrar) {
         if mouse_position.y_position < super::TOP_BAR_HEIGHT as f32{
             //mouse_position is within my top bar
             self.top_bar.handle_mouse_event(mouse_position, mouse_position, mouse_event, registrar);
@@ -275,7 +275,7 @@ impl WindowWidget{
         WindowWidget{
             is_moving: false,
             top_bar: Box::new(TopBarWidget::new(
-                Box::new(vec![])
+                vec![]
             )),
             window_top_bar: WindowTopBarWidget::new(title),
             window_body: Box::new(RectWidget{
@@ -285,7 +285,7 @@ impl WindowWidget{
             height,
             x_position: xpos,
             y_position: ypos,
-            cache: Box::new(vec![]),
+            cache: vec![],
             cache_height: 0,
             cache_width: 0,
             needs_redraw: true,

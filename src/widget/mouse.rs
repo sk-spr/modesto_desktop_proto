@@ -1,5 +1,3 @@
-use lazy_static::lazy_static;
-
 #[derive(Copy, Clone, Eq, PartialEq, Debug)]
 pub enum MouseEvent{
     LMBDown,
