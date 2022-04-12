@@ -1,6 +1,7 @@
 use crate::pixel_font::PixelFont;
 use crate::widget;
 use crate::widget::{Color, Widget, WidgetBounds};
+use crate::widget::mouse::{MouseCallbackRegistrar, MouseEvent, MousePosition};
 
 ///A widget representing a piece of text in a given pixel font. Non-caching.
 pub struct TextWidget{
@@ -65,6 +66,8 @@ impl Widget for TextWidget{
             None => panic!("TextWidget should never return None for render, since it is a bottom level widget"),
         }
     }
+
+    fn handle_mouse_event(&mut self, mouse_position: MousePosition, relative_mouse_position: MousePosition, mouse_event: MouseEvent, registrar: &mut MouseCallbackRegistrar) -> () {}
 }
 
 impl TextWidget{

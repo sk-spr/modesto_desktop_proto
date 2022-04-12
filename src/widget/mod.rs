@@ -3,10 +3,13 @@ use top_bar::TopBarWidget;
 use window::WindowWidget;
 use crate::pixel_font::{FontPixel, PixelFont};
 use crate::widget::text_widget::TextWidget;
+use mouse::{MousePosition, MouseEvent};
+use crate::widget::mouse::MouseCallbackRegistrar;
 
 pub mod text_widget;
 pub mod top_bar;
 pub mod window;
+pub mod mouse;
 
 //TODO: click handling
 //TODO: redraw only if necessary (WIP)
@@ -23,6 +26,9 @@ pub trait Widget{
     fn get_min_bounds(&self) -> WidgetBounds;
     ///Gets the cache for the widget (previously drawn)
     fn get_cache(&mut self) -> Vec<[u8; 4]>;
+    ///Handles a mouse event at the relative location in the widget. To be called recursively from parent
+    /// widget until handled.
+    fn handle_mouse_event(&mut self, mouse_position: MousePosition, relative_mouse_position: MousePosition, mouse_event: MouseEvent, registrar: &mut MouseCallbackRegistrar) -> ();
 }
 
 ///A structure for returning 2d rect boundaries of widgets.
@@ -83,12 +89,13 @@ impl Widget for RectWidget{
             height: self.rec_height,
         }
     }
-
     fn get_cache(&mut self) -> Vec<[u8; 4]> {
         todo!()
     }
+    fn handle_mouse_event(&mut self, mouse_position: MousePosition, relative_mouse_position: MousePosition, mouse_event: MouseEvent, registrar: &mut MouseCallbackRegistrar) {}
 }
 
+const TOP_BAR_HEIGHT: usize = 30;
 ///Master widget holding the open windows in Modesto Desktop. Should only be instantiated once.
 pub struct MainWidget{
     width: usize,
@@ -108,11 +115,11 @@ impl MainWidget{
     pub fn render(&mut self, width: usize, height: usize) -> Vec<[u8; 4]> {
         if self.windows.len() > 0 {
             let mut buf = vec![[128u8; 4]; width * height];
-            let top_bar = self.windows[0].render_top_bar(width, 30);
+            let top_bar = self.windows[0].render_top_bar(width, TOP_BAR_HEIGHT);
             buf = draw_on_top_at(
                 0, 0,
                 buf, width, height,
-                &top_bar, width, 30);
+                &top_bar, width, TOP_BAR_HEIGHT);
             for window in self.windows.iter_mut().rev(){
                 let bounds = window.get_min_bounds();
                 buf= draw_on_top_at(
@@ -126,6 +133,27 @@ impl MainWidget{
             buf
         } else {
             vec![[255u8;4];width * height]
+        }
+    }
+    ///Recursively handle a mouse event by redirecting to the appropriate widget.
+    pub fn handle_mouse_event(&mut self, mouse_position: MousePosition, mouse_event: MouseEvent, mouse_queue: &mut MouseCallbackRegistrar){
+        println!("Main Widget: Mouse event {:#?} at x={}; y={}", mouse_event, mouse_position.x_position, mouse_position.y_position);
+        //find out what component the event should be redirected to
+        if mouse_position.y_position < TOP_BAR_HEIGHT as f32{
+            self.windows[0].handle_mouse_event(mouse_position, mouse_position, mouse_event, mouse_queue);
+        } else {
+            for window in self.windows.iter_mut(){
+                //matches uppermost window containing these coordinates?
+                //TODO: window order switching on click
+                if mouse_position.x_position > window.x_position as f32 &&
+                    mouse_position.x_position < (window.x_position + window.width) as f32 &&
+                    mouse_position.y_position > window.y_position as f32 &&
+                    mouse_position.y_position < (window.y_position + window.height) as f32{
+                    //mouse_position within window bounds
+                    window.handle_mouse_event(mouse_position, mouse_position, mouse_event, mouse_queue);
+                    break;
+                }
+            }
         }
     }
 }

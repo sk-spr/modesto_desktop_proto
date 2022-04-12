@@ -3,6 +3,7 @@ use crate::pixel_font::PixelFont;
 use crate::widget;
 use crate::widget::text_widget::TextWidget;
 use crate::widget::{Color, Widget, WidgetBounds};
+use crate::widget::mouse::{MouseCallbackRegistrar, MouseEvent, MousePosition};
 
 ///Widget representing buttons on the top bar/global menu.
 pub struct TopBarButton{
@@ -79,6 +80,10 @@ impl Widget for TopBarButton{
     fn get_cache(&mut self) -> Vec<[u8; 4]> {
         *self.cache.clone()
     }
+
+    fn handle_mouse_event(&mut self, mouse_position: MousePosition, relative_mouse_position: MousePosition, mouse_event: MouseEvent, registrar: &mut MouseCallbackRegistrar) -> () {
+        todo!()
+    }
 }
 
 ///Widget representing the top bar/global menu.
@@ -149,5 +154,10 @@ impl Widget for TopBarWidget {
 
     fn get_cache(&mut self) -> Vec<[u8; 4]> {
         *self.cache.clone()
+    }
+
+    fn handle_mouse_event(&mut self, mouse_position: MousePosition, relative_mouse_position: MousePosition, mouse_event: MouseEvent, registrar: &mut MouseCallbackRegistrar) -> () {
+        println!("Handling top bar mouse event, abs x={};y={}; rel x={};y={}", mouse_position.x_position, mouse_position.y_position, relative_mouse_position.x_position, relative_mouse_position.y_position);
+
     }
 }

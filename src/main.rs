@@ -1,9 +1,10 @@
 use std::collections::BTreeMap;
 use std::sync::Mutex;
 use std::time::Duration;
-use minifb::{Key, MouseMode, Window, WindowOptions};
+use minifb::{Key, MouseButton, MouseMode, Window, WindowOptions};
 use lazy_static::lazy_static;
-use desktop_minifb::widget::Widget;
+use desktop_minifb::widget::{Widget, mouse::MousePosition};
+use desktop_minifb::widget::mouse::{MouseCallbackRegistrar, MouseEvent, MouseQueueResult};
 
 
 const WIDTH : usize = 720;
@@ -51,25 +52,45 @@ fn main() {
         ])
     )));
     main_widget.reg_window(Box::new(window1));
+    let mut lmb_down = false;
+    let mut mouse_pos = MousePosition{
+        x_position: 0f32,
+        y_position: 0f32
+    };
+    let mut mouse_queue = MouseCallbackRegistrar{
+        callbacks: vec![],
+    };
     while window.is_open() && !(window.is_key_down(Key::LeftAlt) && window.is_key_down(Key::F4)){
-        //MAIN LOOP - FUTURE: IN USERSPACE PROGRAM
-        if x_off == 0{
-            main_widget.windows[0].set_moving(true);
+        let mouse_p = match window.get_mouse_pos(MouseMode::Clamp){
+            Some(tuple) => tuple,
+            None => (0f32,0f32)
+        };
+        mouse_pos.x_position = mouse_p.0;
+        mouse_pos.y_position = mouse_p.1;
+        let mut mouse_event = MouseEvent::LMBUp;
+        let mut needs_first_event = false;
+        if !lmb_down && window.get_mouse_down(MouseButton::Left){
+            mouse_event = MouseEvent::LMBDown;
+            needs_first_event = true;
         }
-        if x_off == 60{
-            main_widget.windows[0].set_moving(false);
+        if lmb_down && !window.get_mouse_down(MouseButton::Left){
+            mouse_event = MouseEvent::LMBUp;
+            needs_first_event = true;
         }
-        x_off = (x_off + 1) % 120;
-        println!("{}", match window.get_mouse_pos(MouseMode::Clamp){
-            Some(p) => format!("{}:{}", p.0, p.1),
-            None => String::from("NONE")
-        });
-        if x_off < 60 {
-            main_widget.windows[0].x_position = 50 + x_off;
-            main_widget.windows[0].y_position = 50 + x_off;
-        } else {
-            main_widget.windows[0].x_position = 110;
-            main_widget.windows[0].y_position = 110;
+        if needs_first_event {
+            main_widget.handle_mouse_event(mouse_pos, mouse_event, &mut mouse_queue);
+        }
+        lmb_down = window.get_mouse_down(MouseButton::Left);
+
+        let mut to_discard = vec![];
+        for i in 0..mouse_queue.callbacks.len(){
+            let result = mouse_queue.callbacks[i](mouse_pos, mouse_event);
+            if result == MouseQueueResult::DiscardMe{
+                to_discard.push(i);
+            }
+        }
+        for index in to_discard.iter().rev(){
+            mouse_queue.callbacks.remove(*index);
         }
         let newfb = main_widget.render(WIDTH, HEIGHT);
         //draw to buffer - REPLACE
